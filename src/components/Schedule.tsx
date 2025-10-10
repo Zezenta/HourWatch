@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import horariosData from '../horarios.json';
 import Filter from './Filter';
+import EnClasesAhora from './EnClasesAhora';
 
 // Define interfaces for type safety
 interface Clase {
@@ -56,6 +57,14 @@ const Schedule: React.FC = () => {
     setHorarios(newHorarios);
   };
 
+  const getTextColor = (bgColor: string) => {
+    const color = (bgColor.charAt(0) === '#') ? bgColor.substring(1, 7) : bgColor;
+    const r = parseInt(color.substring(0, 2), 16); // hexToR
+    const g = parseInt(color.substring(2, 4), 16); // hexToG
+    const b = parseInt(color.substring(4, 6), 16); // hexToB
+    return (r * 0.299 + g * 0.587 + b * 0.114) > 186 ? '#000000' : '#ffffff';
+  };
+
   const dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
   const horas = Array.from({ length: 15 }, (_, i) => `${(i + 7).toString().padStart(2, '0')}:00`);
 
@@ -72,6 +81,8 @@ const Schedule: React.FC = () => {
           {showColorEditor ? 'Ocultar Editor' : 'Editar Colores'}
         </button>
       </div>
+
+      <EnClasesAhora horarios={horarios} />
 
       <div className="mb-2">
         <Filter
@@ -160,8 +171,8 @@ const Schedule: React.FC = () => {
                       <div
                         key={`${clase.nombre}-${clase.materia}-${index}`}
                         onClick={() => setSelectedClass(clase)}
-                        className="rounded-sm p-0.5 text-white flex items-center justify-center text-center overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
-                        style={{ backgroundColor: clase.color }}
+                        className="rounded-sm p-0.5 flex items-center justify-center text-center overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
+                        style={{ backgroundColor: clase.color, color: getTextColor(clase.color) }}
                       >
                         <p className={`font-bold ${fontSizeClass} leading-tight break-normal`}>{clase.materia}</p>
                       </div>
